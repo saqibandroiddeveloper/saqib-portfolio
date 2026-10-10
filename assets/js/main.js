@@ -78,6 +78,57 @@
     });
   });
 
+
+  /* ---------- Project details popup ---------- */
+  var modal = document.getElementById("projectModal");
+  var modalImg = document.getElementById("modalImg");
+  var modalContent = document.getElementById("modalContent");
+  var lastFocus = null;
+
+  function openProject(card) {
+    var detail = card.querySelector(".project-detail");
+    var img = card.querySelector(".project-thumb img");
+    if (!modal || !detail) return;
+    lastFocus = card;
+    modalContent.innerHTML = detail.innerHTML;
+    var title = modalContent.querySelector(".pd-title");
+    if (title) title.id = "modalTitle";
+    if (img) {
+      modalImg.src = img.getAttribute("src");
+      modalImg.alt = img.getAttribute("alt") || "";
+    }
+    modal.hidden = false;
+    document.body.classList.add("modal-open");
+    modal.querySelector(".modal-panel").scrollTop = 0;
+    modal.querySelector(".modal-close").focus();
+  }
+
+  function closeProject() {
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove("modal-open");
+    if (lastFocus) lastFocus.focus();
+  }
+
+  Array.prototype.forEach.call(cards, function (card) {
+    card.addEventListener("click", function () { openProject(card); });
+    card.addEventListener("keydown", function (event) {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openProject(card);
+      }
+    });
+  });
+
+  if (modal) {
+    modal.addEventListener("click", function (event) {
+      if (event.target.hasAttribute("data-close")) closeProject();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") closeProject();
+    });
+  }
+
   /* ---------- Sticky header + back to top ---------- */
   var header = document.getElementById("siteHeader");
   var toTop = document.getElementById("toTop");
@@ -122,7 +173,7 @@
 
   /* ---------- Reveal on scroll ---------- */
   var revealTargets = document.querySelectorAll(
-    ".section-title, .section-sub, .about-grid, .skill-card, .project-card, .timeline-item, .contact-card"
+    ".section-title, .section-sub, .about-grid, .service-card, .stat-row, .help-box, .project-card, .timeline-item, .contact-card"
   );
 
   if ("IntersectionObserver" in window) {
